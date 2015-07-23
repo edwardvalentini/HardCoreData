@@ -66,7 +66,10 @@
         
         /* Create PSC */
         NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES};
-        _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
+
+        NSManagedObjectModel *mom = self.managedObjectModel;
+
+        _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
         
         /* Add store to it */
         NSError *error = nil;
@@ -81,9 +84,7 @@
 {
     if (!_managedObjectModel) {
         
-        /* Current model */
-        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-        NSURL *modelURL = [bundle URLForResource:self.modelName withExtension:@"momd"];
+        NSURL *modelURL = [[NSBundle mainBundle] URLForResource:self.modelName withExtension:@"momd"];
         _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     }
     return _managedObjectModel;
