@@ -22,3 +22,7 @@ Pods/
 Example/Pods/
 Example/Podfile.lock
 Example/*.xcworkspace
+.ruby-gemset
+.ruby-version
+Gemfile
+Gemfile.lock
