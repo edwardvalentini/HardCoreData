@@ -31,11 +31,13 @@
     return [self stackWithModelName:modelName storeType:NSInMemoryStoreType];
 }
 
+#ifdef __MAC_OS_X_VERSION_MAX_ALLOWED
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
 + (instancetype)XMLStackWithName:(NSString *)modelName
 {
     return [self stackWithModelName:modelName storeType:NSXMLStoreType];
 }
+#endif
 #endif
 
 + (instancetype)sqliteStackWithName:(NSString *)modelName
@@ -63,14 +65,14 @@
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator
 {
     if (!_persistentStoreCoordinator) {
-        
+
         /* Create PSC */
         NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES};
 
         NSManagedObjectModel *mom = self.managedObjectModel;
 
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
-        
+
         /* Add store to it */
         NSError *error = nil;
         if (![_persistentStoreCoordinator addPersistentStoreWithType:self.storeType configuration:nil URL:self.storeURL options:options error:&error]) {
@@ -83,7 +85,7 @@
 - (NSManagedObjectModel *)managedObjectModel
 {
     if (!_managedObjectModel) {
-        
+
         NSURL *modelURL = [[NSBundle mainBundle] URLForResource:self.modelName withExtension:@"momd"];
         _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     }
@@ -93,11 +95,11 @@
 - (NSManagedObjectContext *)mainManagedObjectContext
 {
     if (!_mainManagedObjectContext) {
-        
+
         /* Create background context with attached psc */
         NSManagedObjectContext *storageBackgroundContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
         storageBackgroundContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
-        
+
         /* Create main queue context as main */
         _mainManagedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         _mainManagedObjectContext.parentContext = storageBackgroundContext;
@@ -128,14 +130,14 @@
     NSString *bundleIdentifier = [[bundle infoDictionary] objectForKey:(__bridge NSString *)kCFBundleIdentifierKey];
     NSURL *appSupportURL = [[fileManager URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject];
     appSupportURL = [appSupportURL URLByAppendingPathComponent:bundleIdentifier];
-    
+
     /* Check if folder does not exists and create it */
     if (![fileManager fileExistsAtPath:appSupportURL.path]) {
-        
+
         NSError *error = nil;
         [fileManager createDirectoryAtPath:appSupportURL.path withIntermediateDirectories:YES attributes:nil error:&error];
     }
-    
+
     return [appSupportURL URLByAppendingPathComponent:self.modelName];
 #endif
 }

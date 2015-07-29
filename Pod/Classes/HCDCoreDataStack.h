@@ -31,6 +31,7 @@
 
 + (instancetype)inMemoryStackWithName:(NSString *)modelName;
 
+#ifdef __MAC_OS_X_VERSION_MAX_ALLOWED
 #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4
 /**
  *  Convenience initializer that instantiates xml stack with given model name
@@ -41,6 +42,7 @@
  */
 
 + (instancetype)XMLStackWithName:(NSString *)modelName;
+#endif
 #endif
 
 /**
